@@ -1,17 +1,56 @@
+import './product.scss';
 import {post} from '../../helpers/cart-fetch-api/cart-fetch-api';
 
-document.getElementById('AddToCartForm').onsubmit = async function (event) {
+const selectActiveSwatch = (event) => {
+    const swatchSelector = '[data-swatch-selector]';
+    if (event.target.matches(swatchSelector)) {
+        Array.from(document.querySelectorAll(swatchSelector)).forEach((el) =>
+            el.classList.remove('active')
+        );
+        event.target.classList.add('active');
+    }
+};
+
+const getProductData = async (event) => {
+    event.preventDefault();
     const btn = document.getElementById('AddToCartBtn');
     const id = document.getElementById('AddToCartBtn').value;
-    const option1 = document.getElementById('option1').value;
-    const option2 = document.getElementById('option2').value;
-    const qty = document.getElementById('counterQty').value;
+    const quantity = document.getElementById('counterQty').value;
 
-    event.preventDefault();
-    const response = await post('add.js', {id, option1, option2, qty});
-    
-    if(response) {
+    const productData = productOptions;
+
+    const optionOne = document.getElementById('option-1')
+        ? document.getElementById('option-1').value
+        : null;
+    const optionTwo = document.getElementById('option-2')
+        ? document.getElementById('option-2').value
+        : null;
+    const optionThree = document.getElementById('option-3')
+        ? document.getElementById('option-3').value
+        : null;
+
+    let selectedOption = id;
+
+    for (const option of productData.variants) {
+        if (
+            optionOne === option.option1 &&
+            optionTwo === option.option2 &&
+            optionThree === option.option3
+        ) {
+            selectedOption = option;
+            return;
+        }
+    }
+
+    const response = await post('add.js', {id: selectedOption, quantity});
+
+    if (response) {
         btn.textContent = 'ITEM ADDED';
     }
-    return false;
 };
+
+document.getElementById('AddToCartForm').onsubmit = (event) => getProductData(event);
+
+// const swatchContainer = document.querySelector('[data-swatch-container]');
+
+document.addEventListener('click', (event) => selectActiveSwatch(event));

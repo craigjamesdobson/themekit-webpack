@@ -1,0 +1,9 @@
+.swatch-selector {
+    opacity: 0.25;
+    transition: opacity 0.25;
+
+    &.active {
+        opacity: 1;
+        transition: opacity 0.25s;
+    }
+}
