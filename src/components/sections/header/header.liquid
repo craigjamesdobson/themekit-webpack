@@ -25,7 +25,7 @@
         <a href="/"><span class="font-semibold text-xl tracking-tight">{{ shop.name }}</span></a>
     </div>
     <div class="flex-grow flex items-center w-auto">
-      <ul class="text-sm flex-grow">
+      <ul class="flex flex-grow">
         {%- for link in linklists[section.settings.menu].links -%}
         {%- if link.links != blank -%}
         <li class="inline-block mt-0 mr-4">
@@ -41,6 +41,7 @@
         <li class="inline-block mt-0 mr-4"><a href="{{ link.url }}">{{ link.title }}</a></li>
         {%- endif -%}
         {%- endfor -%}
+        <li class="inline-block mt-0 ml-auto"><a href="/cart">Cart</a></li>
       </ul>
     </div>
   </nav>
