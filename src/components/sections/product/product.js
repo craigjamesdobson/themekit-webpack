@@ -1,56 +1,40 @@
 import './product.scss';
-import {post} from '../../helpers/cart-fetch-api/cart-fetch-api';
+import {
+    preselectOptions,
+    selectActiveSwatch,
+    postProductData,
+    getSelectedVariant,
+    getSelectedOptions,
+    getVariantPrice,
+} from './components/product-options';
+import {getVariantImage} from './components/product-media';
 
-const selectActiveSwatch = (event) => {
-    const swatchSelector = '[data-swatch-selector]';
-    if (event.target.matches(swatchSelector)) {
-        Array.from(document.querySelectorAll(swatchSelector)).forEach((el) =>
-            el.classList.remove('active')
-        );
-        event.target.classList.add('active');
-    }
-};
+const productData = productOptions;
 
-const getProductData = async (event) => {
+document.getElementById('product-options-container').addEventListener('click', (event) => {
     event.preventDefault();
-    const btn = document.getElementById('AddToCartBtn');
-    const id = document.getElementById('AddToCartBtn').value;
-    const quantity = document.getElementById('counterQty').value;
 
-    const productData = productOptions;
+    // Select the active swatch
+    selectActiveSwatch(event);
 
-    const optionOne = document.getElementById('option-1')
-        ? document.getElementById('option-1').value
-        : null;
-    const optionTwo = document.getElementById('option-2')
-        ? document.getElementById('option-2').value
-        : null;
-    const optionThree = document.getElementById('option-3')
-        ? document.getElementById('option-3').value
-        : null;
+    const selectedVariant = getSelectedVariant(getSelectedOptions(), productOptions.variants);
 
-    let selectedOption = id;
+    // Selected variant is null return
+    if (!selectedVariant) return;
 
-    for (const option of productData.variants) {
-        if (
-            optionOne === option.option1 &&
-            optionTwo === option.option2 &&
-            optionThree === option.option3
-        ) {
-            selectedOption = option;
-            return;
-        }
-    }
+    // Get the selected variant image object from the selected variant
+    const variantImage = getVariantImage(selectedVariant);
+    const variantPrice = getVariantPrice(selectedVariant);
 
-    const response = await post('add.js', {id: selectedOption, quantity});
+    document.querySelector('[data-product-image]').src = variantImage.src;
+    document.querySelector('[data-product-price]').innerText = variantPrice;
+});
 
-    if (response) {
-        btn.textContent = 'ITEM ADDED';
-    }
+document.getElementById('AddToCartForm').onsubmit = (event) => {
+    postProductData(event);
 };
 
-document.getElementById('AddToCartForm').onsubmit = (event) => getProductData(event);
-
-// const swatchContainer = document.querySelector('[data-swatch-container]');
-
-document.addEventListener('click', (event) => selectActiveSwatch(event));
+// Only run selection if product has more than one variant
+if (productData.variants.length > 1) {
+    preselectOptions();
+}
