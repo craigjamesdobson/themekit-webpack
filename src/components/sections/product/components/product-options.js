@@ -87,17 +87,17 @@ const showErrorMessage = (errMsg) => {
 export const postProductData = async (event) => {
     event.preventDefault();
     const btn = document.getElementById('AddToCartBtn');
-    let id = document.getElementById('AddToCartBtn').value;
+    const id = document.getElementById('AddToCartBtn').value;
     const quantity = document.getElementById('counterQty').value;
 
-    id = getSelectedVariant(getSelectedOptions(), productData.variants);
+    const selectedVariant = getSelectedVariant(getSelectedOptions(), productData.variants);
 
-    if (!id) {
+    if (!selectedVariant) {
         showErrorMessage('Please select a valid variant');
         return;
     }
 
-    const response = await post('add.js', {id, quantity});
+    const response = await post('add.js', {id: selectedVariant.id, quantity});
 
     if (response) {
         btn.textContent = 'ITEM ADDED';
